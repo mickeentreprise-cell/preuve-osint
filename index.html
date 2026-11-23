@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREUVE.OSINT — Recherche documentaire pour victimes d'arnaques financières</title>
+<meta name="description" content="Recherche OSINT en sources ouvertes : domaines, régulateurs, mécanismes, personnes identifiées. Un dossier sourcé pour votre avocat. Nous ne vendons pas de récupération.">
+<style>
+  :root{
+    --bleu:#0d2b45; --or:#c9a227; --gris:#f7f8fa; --texte:#1a1a1a; --doux:#5a6b7b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--texte);line-height:1.6;background:#fff}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* HEADER */
+  header{background:var(--bleu);color:#fff;padding:18px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .logo{font-size:22px;font-weight:800;letter-spacing:.5px}
+  .logo span{color:var(--or)}
+  nav{display:flex;gap:22px;font-size:14px}
+  nav a{color:#cfd9e3;text-decoration:none;transition:.2s}
+  nav a:hover{color:var(--or)}
+
+  /* HERO */
+  .hero{background:linear-gradient(160deg,var(--bleu) 0%,#16405f 100%);color:#fff;padding:70px 0 80px;text-align:center}
+  .hero h1{font-size:clamp(26px,4.2vw,44px);line-height:1.18;margin-bottom:18px;font-weight:800}
+  .hero h1 em{color:var(--or);font-style:normal}
+  .hero p{font-size:clamp(15px,1.8vw,19px);color:#cfd9e3;max-width:720px;margin:0 auto 14px}
+  .hero .warn{display:inline-block;margin-top:22px;background:rgba(201,162,39,.14);border:1px solid rgba(201,162,39,.5);
+    color:var(--or);padding:11px 20px;border-radius:8px;font-size:14px;font-weight:600;max-width:760px}
+  .cta{display:inline-block;margin-top:28px;background:var(--or);color:var(--bleu);font-weight:800;
+    padding:15px 38px;border-radius:8px;text-decoration:none;font-size:17px;transition:.2s;box-shadow:0 6px 20px rgba(201,162,39,.35)}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(201,162,39,.5)}
+
+  /* SECTIONS */
+  section{padding:64px 0}
+  section:nth-child(even){background:var(--gris)}
+  h2{font-size:clamp(22px,3vw,32px);color:var(--bleu);margin-bottom:12px;font-weight:800}
+  .sous{color:var(--doux);margin-bottom:36px;font-size:16px;max-width:760px}
+  h3{font-size:18px;color:var(--bleu);margin-bottom:10px}
+
+  /* CARTES PROBLEME */
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+  .carte{background:#fff;border:1px solid #e3e7ec;border-left:4px solid var(--or);border-radius:10px;padding:24px;
+    box-shadow:0 2px 10px rgba(0,0,0,.04)}
+  .carte .n{font-size:12px;font-weight:800;color:var(--or);letter-spacing:1px;text-transform:uppercase}
+  .carte h3{margin-top:6px}
+  .carte p{font-size:14.5px;color:var(--doux)}
+
+  /* PRIX */
+  .prix-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;align-items:start}
+  .prix{background:#fff;border:1px solid #e3e7ec;border-radius:14px;padding:30px 26px;text-align:center;
+    position:relative;transition:.2s}
+  .prix:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(13,43,69,.12)}
+  .prix.mise{border:2px solid var(--or);box-shadow:0 8px 26px rgba(201,162,39,.22)}
+  .prix .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--or);
+    color:var(--bleu);font-size:11px;font-weight:800;padding:5px 16px;border-radius:20px;letter-spacing:.6px}
+  .prix .nom{font-size:14px;font-weight:800;color:var(--bleu);text-transform:uppercase;letter-spacing:1px}
+  .prix .montant{font-size:44px;font-weight:800;color:var(--bleu);margin:12px 0 4px}
+  .prix .montant small{font-size:15px;font-weight:600;color:var(--doux)}
+  .prix .delai{font-size:13px;color:var(--or);font-weight:700;margin-bottom:18px}
+  .prix ul{list-style:none;text-align:left;font-size:14px;color:var(--doux);margin-bottom:22px}
+  .prix li{padding:6px 0 6px 22px;position:relative}
+  .prix li:before{content:"✓";position:absolute;left:0;color:var(--or);font-weight:800}
+  .prix a{display:block;background:var(--bleu);color:#fff;text-decoration:none;font-weight:700;
+    padding:12px;border-radius:7px;font-size:14.5px;transition:.2s}
+  .prix a:hover{background:var(--or);color:var(--bleu)}
+
+  /* OPTIONS */
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);font-size:14.5px}
+  th{background:var(--bleu);color:#fff;text-align:left;padding:13px 16px;font-weight:700}
+  td{padding:12px 16px;border-bottom:1px solid #edf0f3;color:var(--doux)}
+  td strong{color:var(--bleu)}
+  tr:last-child td{border-bottom:none}
+
+  /* CE QU'ON N'EST PAS */
+  .refus{background:#fff4f4;border:1px solid #f0c9c9;border-left:5px solid #c93b3b;border-radius:10px;padding:26px}
+  .refus h3{color:#a52d2d}
+  .refus ul{list-style:none;margin-top:12px}
+  .refus li{padding:7px 0 7px 28px;position:relative;font-size:15px;color:#7a3030}
+  .refus li:before{content:"✕";position:absolute;left:0;color:#c93b3b;font-weight:800}
+
+  /* EXEMPLE */
+  .exemple{background:#fff;border:1px solid #e3e7ec;border-radius:12px;padding:28px}
+  .exemple .t{font-weight:800;color:var(--bleu);font-size:17px;margin-bottom:8px}
+  .exemple .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin-top:18px}
+  .exemple .stat{background:var(--gris);border-radius:8px;padding:14px;text-align:center}
+  .exemple .stat b{display:block;font-size:26px;color:var(--or)}
+  .exemple .stat span{font-size:12px;color:var(--doux)}
+
+  /* FAQ */
+  details{background:#fff;border:1px solid #e3e7ec;border-radius:10px;padding:18px 22px;margin-bottom:12px}
+  summary{font-weight:700;color:var(--bleu);cursor:pointer;font-size:15.5px}
+  details p{margin-top:12px;color:var(--doux);font-size:14.5px}
+
+  /* FOOTER */
+  footer{background:var(--bleu);color:#9fb3c6;padding:44px 0 30px;font-size:13.5px}
+  footer .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
+  footer h4{color:#fff;font-size:14px;margin-bottom:12px;letter-spacing:.5px}
+  footer a{color:var(--or);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  .legal{grid-column:1/-1;border-top:1px solid #24455f;margin-top:26px;padding-top:20px;
+    font-size:12px;color:#7d94a8;line-height:1.7}
+
+  @media(max-width:640px){
+    nav{display:none}
+    section{padding:44px 0}
+    .prix .montant{font-size:36px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">PREUVE<span>.OSINT</span></div>
+    <nav>
+      <a href="#probleme">Le problème</a>
+      <a href="#offre">Tarifs</a>
+      <a href="#exemple">Exemple</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>On vous a arnaqué.<br>Et vous ne savez pas <em>par où commencer</em>.</h1>
+    <p>Nous produisons le dossier de recherche documentaire que votre avocat, le parquet ou le
+       régulateur vous demandera : qui héberge la plateforme, quel régulateur l'a déjà signalée,
+       quel est le mécanisme, qui sont les personnes identifiables.</p>
+    <p>Sources publiques uniquement. Tout est vérifiable. Rien n'est inventé.</p>
+    <div class="warn">
+      ⚠️ Nous ne vendons pas de récupération de fonds. Nous ne garantissons aucun résultat.
+      Nous produisons un dossier de recherche, point.
+    </div>
+    <a class="cta" href="#offre">Voir les formules →</a>
+  </div>
+</div>
+
+<section id="probleme">
+  <div class="wrap">
+    <h2>Le problème n'est pas l'argent. C'est le vide.</h2>
+    <p class="sous">Quand une victime comprend qu'elle s'est fait arnaquer, elle tombe sur trois murs.</p>
+    <div class="grille">
+      <div class="carte">
+        <div class="n">Mur n°1</div>
+        <h3>La plateforme est injoignable</h3>
+        <p>Le site ferme, change de nom, ou répond qu'un « transfert de serveur » est en cours.
+           Les retraits sont reportés de mois en mois.</p>
+      </div>
+      <div class="carte">
+        <div class="n">Mur n°2</div>
+        <h3>Personne ne sait qui contacter</h3>
+        <p>Quel régulateur ? Quel pays ? Quelle juridiction ? Faut-il porter plainte, ou signaler ?
+           Et à qui, exactement ?</p>
+      </div>
+      <div class="carte">
+        <div class="n">Mur n°3</div>
+        <h3>Les avocats demandent un dossier</h3>
+        <p>Un avocat ne travaille pas sur une plainte vague. Il lui faut des domaines, des
+           dates, des hébergeurs, des autorités déjà saisies. C'est ce dossier que nous produisons.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="offre">
+  <div class="wrap">
+    <h2>Nos formules</h2>
+    <p class="sous">Prix HT. Paiement avant livraison. Le dossier vous appartient.</p>
+    <div class="prix-grille">
+
+      <div class="prix">
+        <div class="nom">Diagnostic</div>
+        <div class="montant">49 <small>€</small></div>
+        <div class="delai">Livré en 24 h</div>
+        <ul>
+          <li>La plateforme est-elle une arnaque ?</li>
+          <li>Domaines et hébergement</li>
+          <li>Régulateurs l'ayant signalée</li>
+          <li>5 à 8 pages</li>
+          <li>Verdict argumenté</li>
+        </ul>
+        <a href="#contact">Commander</a>
+      </div>
+
+      <div class="prix mise">
+        <div class="badge">LE PLUS CHOISI</div>
+        <div class="nom">Dossier Essentiel</div>
+        <div class="montant">149 <small>€</small></div>
+        <div class="delai">Livré en 72 h</div>
+        <ul>
+          <li>Tout le Diagnostic</li>
+          <li>Chronologie complète</li>
+          <li>WHOIS / RDAP de chaque domaine</li>
+          <li>Mécanisme de l'arnaque détaillé</li>
+          <li>Autorités compétentes classées</li>
+          <li>15 pages</li>
+        </ul>
+        <a href="#contact">Commander</a>
+      </div>
+
+      <div class="prix">
+        <div class="nom">Dossier Complet</div>
+        <div class="montant">299 <small>€</small></div>
+        <div class="delai">Livré en 5 jours</div>
+        <ul>
+          <li>Tout l'Essentiel</li>
+          <li>Personnes identifiées</li>
+          <li>Comptes et canaux du réseau</li>
+          <li>Modèle de plainte prêt à déposer</li>
+          <li>Analyse blockchain (si adresse fournie)</li>
+          <li>30 pages</li>
+        </ul>
+        <a href="#contact">Commander</a>
+      </div>
+
+      <div class="prix">
+        <div class="nom">Accompagnement</div>
+        <div class="montant">199 <small>€/mois</small></div>
+        <div class="delai">Sans engagement</div>
+        <ul>
+          <li>Suivi du dossier</li>
+          <li>Mises à jour régulières</li>
+          <li>Relances des autorités</li>
+          <li>Mise en relation avec des avocats</li>
+          <li>Réponses illimitées</li>
+        </ul>
+        <a href="#contact">Souscrire</a>
+      </div>
+
+    </div>
+
+    <h3 style="margin-top:48px">Options</h3>
+    <table>
+      <tr><th>Option</th><th>Prix</th></tr>
+      <tr><td><strong>Analyse blockchain</strong> — traçage de l'adresse de paiement</td><td>+ 89 €</td></tr>
+      <tr><td><strong>Rédaction de la plainte</strong> — prête à déposer</td><td>+ 79 €</td></tr>
+      <tr><td><strong>Traduction</strong> allemand ou anglais</td><td>+ 59 €</td></tr>
+      <tr><td><strong>Urgence</strong> — livraison en 12 h</td><td>+ 50 %</td></tr>
+      <tr><td><strong>Pack 5 victimes</strong></td><td>449 €</td></tr>
+      <tr><td><strong>Pack 10 victimes</strong></td><td>799 €</td></tr>
+      <tr><td><strong>Offre cabinet d'avocats</strong> — jusqu'à 15 dossiers/mois</td><td>499 €/mois</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="exemple">
+  <div class="wrap">
+    <h2>Un exemple réel</h2>
+    <p class="sous">Dossier produit sur une plateforme d'investissement active en novembre 2026.</p>
+    <div class="exemple">
+      <div class="t">Cryptex → Bytnex — dossier de référence</div>
+      <p style="color:var(--doux);font-size:15px">
+        Quatre régulateurs alertés, onze personnes identifiées, une chronologie sur dix ans,
+        le mécanisme des contrats décortiqué, et l'aveu de la plateforme elle-même —
+        retrouvé dans sa propre foire aux questions.
+      </p>
+      <div class="stats">
+        <div class="stat"><b>46</b><span>domaines analysés</span></div>
+        <div class="stat"><b>4</b><span>régulateurs</span></div>
+        <div class="stat"><b>11</b><span>personnes identifiées</span></div>
+        <div class="stat"><b>10 ans</b><span>de chronologie</span></div>
+        <div class="stat"><b>23</b><span>sources vérifiables</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Ce que nous ne sommes pas</h2>
+    <p class="sous">C'est aussi important que ce que nous sommes.</p>
+    <div class="refus">
+      <h3>À lire avant de commander</h3>
+      <ul>
+        <li>Nous ne sommes <strong>pas</strong> un service de récupération de fonds.</li>
+        <li>Nous ne garantissons <strong>aucun</strong> remboursement.</li>
+        <li>Nous ne sommes <strong>pas</strong> avocats et ne fournissons pas de conseil juridique.</li>
+        <li>Nous ne demandons <strong>jamais</strong> de frais après la livraison.</li>
+        <li>Nous ne contactons <strong>jamais</strong> une victime pour lui proposer une récupération.</li>
+        <li>Si quelqu'un vous promet de récupérer votre argent contre un paiement, <strong>c'est une arnaque</strong>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+
+    <details>
+      <summary>Est-ce que vous récupérez mon argent ?</summary>
+      <p>Non. Nous produisons un dossier de recherche documentaire. C'est un avocat, un régulateur
+         ou un parquet qui peut agir — pas nous. Nous vous donnons les éléments pour qu'ils puissent
+         travailler.</p>
+    </details>
+
+    <details>
+      <summary>D'où viennent vos informations ?</summary>
+      <p>Uniquement de sources publiques : WHOIS et RDAP (registres de domaines), Certificate
+         Transparency, DNS, Internet Archive, sites officiels des régulateurs, presse spécialisée,
+         et blockchain publique. Chaque fait est sourcé et vérifiable.</p>
+    </details>
+
+    <details>
+      <summary>Est-ce légal ?</summary>
+      <p>Oui. Nous ne faisons aucune intrusion, aucun accès non autorisé, aucune interception.
+         Nous lisons ce que les serveurs publient publiquement. C'est exactement ce que fait un
+         journaliste d'investigation.</p>
+    </details>
+
+    <details>
+      <summary>Pourquoi ne pas le faire moi-même ?</summary>
+      <p>Vous pouvez. Il faut compter 2 à 6 heures de recherches techniques, connaître WHOIS, RDAP,
+         Certificate Transparency, les sites de quatre régulateurs, et savoir structurer un dossier
+         recevable. Nous le faisons en 72 heures et vous livrons un document prêt à remettre.</p>
+    </details>
+
+    <details>
+      <summary>Le dossier est-il recevable devant un tribunal ?</summary>
+      <p>Le dossier rassemble des preuves issues de sources publiques, datées et vérifiables.
+         C'est un support de travail pour votre avocat. La recevabilité finale dépend de la
+         procédure et du juge — c'est pourquoi nous vous recommandons de le faire valider par un
+         professionnel du droit.</p>
+    </details>
+
+    <details>
+      <summary>Et si je me suis déjà fait arnaquer par un « service de récupération » ?</summary>
+      <p>Dites-le nous. C'est fréquent. Nous ne vous demanderons jamais d'argent pour récupérer
+         quoi que ce soit. Notre prestation est une prestation de recherche, facturée une fois.</p>
+    </details>
+
+    <details>
+      <summary>Quels moyens de paiement ?</summary>
+      <p>Virement bancaire ou PayPal. Facture fournie. Paiement avant livraison.</p>
+    </details>
+
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <h2>Commander un dossier</h2>
+    <p class="sous">Décrivez votre situation en quelques lignes. Nous répondons sous 24 h avec un devis
+       et un délai.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px">
+      <div class="carte">
+        <div class="n">Telegram</div>
+        <h3>@PreuveOSINT</h3>
+        <p>Le plus rapide. Message direct, réponse sous 24 h.</p>
+      </div>
+      <div class="carte">
+        <div class="n">Email</div>
+        <h3>contact@preuve-osint.ch</h3>
+        <p>Pour les dossiers détaillés et les factures.</p>
+      </div>
+      <div class="carte">
+        <div class="n">Avocats &amp; associations</div>
+        <h3>Offre cabinet</h3>
+        <p>Jusqu'à 15 dossiers par mois. Tarif dégressif. Écrivez-nous.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>PREUVE.OSINT</h4>
+      <p>Recherche documentaire en sources ouvertes pour victimes d'arnaques financières.</p>
+    </div>
+    <div>
+      <h4>Formules</h4>
+      <p><a href="#offre">Diagnostic 49 €</a><br>
+         <a href="#offre">Essentiel 149 €</a><br>
+         <a href="#offre">Complet 299 €</a><br>
+         <a href="#offre">Accompagnement 199 €/mois</a></p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>Telegram : <a href="https://t.me/PreuveOSINT">@PreuveOSINT</a><br>
+         Email : <a href="mailto:contact@preuve-osint.ch">contact@preuve-osint.ch</a></p>
+    </div>
+    <div class="legal">
+      <strong>Mentions légales.</strong> PREUVE.OSINT est un service de recherche documentaire en
+      sources ouvertes, édité par Crypto Future Tech, Cours des Bastions 13, 1205 Genève, Suisse
+      (IDE CHE-210.303.236). Nous ne sommes ni avocat, ni conseil juridique, ni service de
+      récupération de fonds. Nous ne garantissons aucun résultat. Les informations fournies sont
+      issues de sources publiques et doivent être vérifiées par un professionnel du droit. Aucun
+      démarchage téléphonique. Nous ne contactons jamais une victime pour lui proposer une
+      récupération de fonds.<br><br>
+      © 2026 PREUVE.OSINT — Tous droits réservés.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
